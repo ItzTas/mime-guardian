@@ -2,23 +2,26 @@ use super::types::{Effective, Layer, Origin};
 
 pub fn effective(
     layers: &[Layer],
-    mime: &str,
+    keys: &[String],
     installed: impl Fn(&str) -> bool,
 ) -> Option<Effective> {
-    from_defaults(layers, mime, &installed).or_else(|| from_added(layers, mime, &installed))
+    from_defaults(layers, keys, &installed).or_else(|| from_added(layers, keys, &installed))
+}
+
+fn each<'a>(
+    keys: &'a [String],
+    read: impl Fn(&str) -> Vec<String> + 'a,
+) -> impl Iterator<Item = String> + 'a {
+    keys.iter().flat_map(move |key| read(key))
 }
 
 fn from_defaults(
     layers: &[Layer],
-    mime: &str,
+    keys: &[String],
     installed: &impl Fn(&str) -> bool,
 ) -> Option<Effective> {
     layers.iter().find_map(|layer| {
-        let app = layer
-            .file
-            .defaults(mime)
-            .into_iter()
-            .find(|app| installed(app))?;
+        let app = each(keys, |key| layer.file.defaults(key)).find(|app| installed(app))?;
         Some(Effective {
             app,
             path: layer.source.path.clone(),
@@ -29,16 +32,13 @@ fn from_defaults(
 
 fn from_added(
     layers: &[Layer],
-    mime: &str,
+    keys: &[String],
     installed: &impl Fn(&str) -> bool,
 ) -> Option<Effective> {
     let mut removed: Vec<String> = Vec::new();
     for layer in layers {
-        removed.extend(layer.file.removed(mime));
-        let found = layer
-            .file
-            .added(mime)
-            .into_iter()
+        removed.extend(each(keys, |key| layer.file.removed(key)));
+        let found = each(keys, |key| layer.file.added(key))
             .find(|app| installed(app) && !removed.contains(app));
         let Some(app) = found else {
             continue;
@@ -73,6 +73,26 @@ mod tests {
         true
     }
 
+    fn keys(names: &[&str]) -> Vec<String> {
+        names.iter().map(|name| name.to_string()).collect()
+    }
+
+    #[test]
+    fn an_alias_entry_answers_for_its_canonical_type() {
+        let layers = [layer(
+            "/user",
+            "[Default Applications]\nvideo/x-matroska=mpv.desktop\n",
+        )];
+
+        let found = effective(
+            &layers,
+            &keys(&["video/matroska", "video/x-matroska"]),
+            everything,
+        );
+
+        assert_eq!(found.unwrap().app, "mpv.desktop");
+    }
+
     #[test]
     fn the_first_layer_with_a_default_wins() {
         let layers = [
@@ -86,7 +106,7 @@ mod tests {
             ),
         ];
 
-        let found = effective(&layers, "text/html", everything).unwrap();
+        let found = effective(&layers, &keys(&["text/html"]), everything).unwrap();
 
         assert_eq!(found.app, "chrome.desktop");
         assert_eq!(found.path, PathBuf::from("/kde"));
@@ -103,7 +123,7 @@ mod tests {
             ),
         ];
 
-        let found = effective(&layers, "text/html", |app| app != "gone.desktop").unwrap();
+        let found = effective(&layers, &keys(&["text/html"]), |app| app != "gone.desktop").unwrap();
 
         assert_eq!(found.app, "firefox.desktop");
     }
@@ -121,10 +141,10 @@ mod tests {
             ),
         ];
 
-        let found = effective(&layers, "text/html", everything).unwrap();
+        let found = effective(&layers, &keys(&["text/html"]), everything).unwrap();
 
         assert_eq!(found.app, "firefox.desktop");
         assert_eq!(found.origin, Origin::Added);
-        assert!(effective(&layers, "image/png", everything).is_none());
+        assert!(effective(&layers, &keys(&["image/png"]), everything).is_none());
     }
 }
