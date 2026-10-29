@@ -37,3 +37,24 @@ pub const MAN_DOCUMENTATION: &str = concat!(
 pub const ROFF_PREAMBLE: &str = r#".ie \n(.g .ds Aq \(aq
 .el .ds Aq '
 "#;
+
+pub const UNSET: &str = "(none)";
+
+pub const INIT_COMMAND: &str = "init";
+
+pub const INIT_NEXT: &str =
+    "(edit it to keep only the types you care about, then use \"mmg apply\" to pin them)";
+
+pub const STATUS_OVERRIDDEN: &str = "Types another application took:";
+
+pub const STATUS_OVERRIDDEN_HINT: &str = "(use \"mmg apply\" to put them back)";
+
+pub const STATUS_UNPINNED: &str = "Types not pinned in your files yet:";
+
+pub const STATUS_UNPINNED_HINT: &str = "(use \"mmg apply\" to write them)";
+
+pub const STATUS_SKIPPED: &str = "Types skipped, their application is not installed:";
+
+pub const STATUS_SKIPPED_HINT: &str = "(install the application or change it in the configuration)";
+
+pub const STATUS_CLEAN: &str = "nothing to apply, every protected type is set";

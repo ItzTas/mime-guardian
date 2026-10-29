@@ -1,6 +1,6 @@
 use clap::{ArgAction, Parser, Subcommand};
 
-use super::commands::CompletionsArgs;
+use super::commands::{CompletionsArgs, InitArgs, StatusArgs};
 
 #[derive(Debug, Parser)]
 #[command(
@@ -30,6 +30,10 @@ pub struct Cli {
 
 #[derive(Debug, Subcommand)]
 pub enum Cmd {
+    #[command(about = "Create the configuration from the defaults this session uses now")]
+    Init(InitArgs),
+    #[command(about = "List the protected types whose default is not the one you set")]
+    Status(StatusArgs),
     #[command(about = "Print a completion script for a shell")]
     Completions(CompletionsArgs),
     #[command(about = "Print the manual page")]

@@ -1,5 +1,10 @@
 pub mod cli;
+pub mod config;
+pub mod desktop;
 pub mod files;
 pub mod mimeapps;
+pub mod mimedb;
 pub mod output;
+pub mod reconcile;
+pub mod system;
 pub mod utils;
