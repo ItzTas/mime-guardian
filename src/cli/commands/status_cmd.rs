@@ -6,6 +6,7 @@ use super::super::constants::{
     STATUS_UNPINNED, STATUS_UNPINNED_HINT, UNSET,
 };
 use super::context::Context;
+use crate::history::Event;
 use crate::output::{self, Tone};
 use crate::reconcile::{Drift, Plan};
 
@@ -67,9 +68,17 @@ fn drifts(head: &str, hint: &str, tone: Tone, drifts: &[&Drift]) {
 }
 
 fn describe(drift: &Drift) -> String {
-    let previous = drift.previous().unwrap_or(UNSET);
-    if previous == drift.wanted {
-        return drift.wanted.clone();
+    change(drift.previous(), &drift.wanted)
+}
+
+pub fn describe_event(event: &Event) -> String {
+    change(event.from.as_deref(), &event.to)
+}
+
+fn change(from: Option<&str>, to: &str) -> String {
+    let from = from.unwrap_or(UNSET);
+    if from == to {
+        return to.to_string();
     }
-    format!("{previous} → {}", drift.wanted)
+    format!("{from} → {to}")
 }

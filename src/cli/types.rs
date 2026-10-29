@@ -1,6 +1,6 @@
 use clap::{ArgAction, Parser, Subcommand};
 
-use super::commands::{CompletionsArgs, InitArgs, StatusArgs};
+use super::commands::{ApplyArgs, CompletionsArgs, InitArgs, LogArgs, RestoreArgs, StatusArgs};
 
 #[derive(Debug, Parser)]
 #[command(
@@ -34,6 +34,12 @@ pub enum Cmd {
     Init(InitArgs),
     #[command(about = "List the protected types whose default is not the one you set")]
     Status(StatusArgs),
+    #[command(about = "Pin every protected type to the application you set, once")]
+    Apply(ApplyArgs),
+    #[command(about = "List the times an application took a protected type and mmg put it back")]
+    Log(LogArgs),
+    #[command(about = "Put back the mimeapps.list files an earlier write replaced")]
+    Restore(RestoreArgs),
     #[command(about = "Print a completion script for a shell")]
     Completions(CompletionsArgs),
     #[command(about = "Print the manual page")]

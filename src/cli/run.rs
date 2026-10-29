@@ -36,6 +36,9 @@ fn run_command(command: Cmd) -> Result<()> {
     match command {
         Cmd::Init(args) => commands::init_cmd(args),
         Cmd::Status(args) => commands::status_cmd(args),
+        Cmd::Apply(args) => commands::apply_cmd(args),
+        Cmd::Log(args) => commands::log_cmd(args),
+        Cmd::Restore(args) => commands::restore_cmd(args),
         Cmd::Completions(args) => commands::completions_cmd(args),
         Cmd::Man => commands::man_cmd(),
     }

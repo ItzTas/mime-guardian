@@ -58,3 +58,21 @@ pub const STATUS_SKIPPED: &str = "Types skipped, their application is not instal
 pub const STATUS_SKIPPED_HINT: &str = "(install the application or change it in the configuration)";
 
 pub const STATUS_CLEAN: &str = "nothing to apply, every protected type is set";
+
+pub const APPLY_PINNED: &str = "Pinned:";
+
+pub const APPLY_DRY_RUN: &str = "Files mmg apply would write:";
+
+pub const APPLY_CONFLICTS: &str =
+    "these files changed while mmg was writing and were left alone; run mmg apply again:";
+
+pub const LOG_DEFAULT_LIMIT: usize = 20;
+
+pub const LOG_EMPTY: &str =
+    "no application has taken a protected type yet (use --all to include first pins)";
+
+pub const RESTORE_COMMAND: &str = "restore";
+
+pub const RESTORE_EMPTY: &str = "no backups yet; mmg makes one every time it writes";
+
+pub const RESTORE_WATCH_HINT: &str = "(a running mmg watch pins the configured defaults again; change the configuration to keep these)";
