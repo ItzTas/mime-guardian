@@ -1,0 +1,114 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  assets:
+    name: Build and publish the release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.ref_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu,aarch64-unknown-linux-gnu
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install the aarch64 linker
+        run: sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Build
+        run: |
+          ./packaging/release/build.sh "$TAG"
+          ./packaging/release/source.sh "$TAG"
+          ./packaging/release/deb.sh "$TAG"
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ./packaging/release/notes.sh "$TAG" >notes.md || printf '%s\n' "$TAG" >notes.md
+          flags=()
+          case "${TAG#v}" in
+          *-*) flags+=(--prerelease) ;;
+          esac
+          gh release create "$TAG" dist/* --title "$TAG" --notes-file notes.md "${flags[@]}"
+
+  crates:
+    name: Publish to crates.io
+    needs: assets
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.ref_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: ./packaging/release/crates.sh "$TAG"
+
+  aur:
+    name: Publish ${{ matrix.package }} to the AUR
+    needs: assets
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - mime-guardian
+          - mime-guardian-bin
+          - mime-guardian-nightly
+    env:
+      TAG: ${{ github.ref_name }}
+      PACKAGE: ${{ matrix.package }}
+    steps:
+      - name: Install tools
+        run: pacman -Syu --noconfirm git openssh
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish
+        env:
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+        run: |
+          nightly=false
+          case "${TAG#v}" in
+          *-*) nightly=true ;;
+          esac
+          case "$PACKAGE" in
+          *-nightly) wanted=true ;;
+          *) wanted=false ;;
+          esac
+          if [ "$nightly" != "$wanted" ]; then
+            echo "aur: $PACKAGE does not follow $TAG"
+            exit 0
+          fi
+          mkdir -p ~/.ssh
+          printf '%s\n' "$AUR_SSH_PRIVATE_KEY" >~/.ssh/aur
+          chmod 600 ~/.ssh/aur
+          ssh-keyscan aur.archlinux.org >>~/.ssh/known_hosts
+          printf 'Host aur.archlinux.org\n  User aur\n  IdentityFile ~/.ssh/aur\n' >~/.ssh/config
+          ./packaging/aur/publish.sh "$PACKAGE" "$TAG"
