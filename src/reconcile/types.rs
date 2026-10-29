@@ -1,6 +1,16 @@
 use std::path::PathBuf;
 
+use crate::backup::Backup;
+use crate::history::Event;
 use crate::mimeapps::Effective;
+
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct Outcome {
+    pub written: Vec<PathBuf>,
+    pub conflicts: Vec<PathBuf>,
+    pub backup: Option<Backup>,
+    pub events: Vec<Event>,
+}
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Plan {
