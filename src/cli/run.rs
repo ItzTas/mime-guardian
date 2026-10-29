@@ -43,6 +43,7 @@ fn run_command(command: Cmd) -> Result<()> {
         Cmd::Set(args) => commands::set_cmd(args),
         Cmd::Unset(args) => commands::unset_cmd(args),
         Cmd::Service(args) => commands::service_cmd(args),
+        Cmd::Adopt(args) => commands::adopt_cmd(args),
         Cmd::Completions(args) => commands::completions_cmd(args),
         Cmd::Man => commands::man_cmd(),
     }

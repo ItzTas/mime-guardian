@@ -89,3 +89,14 @@ pub const SERVICE_NOT_INSTALLED: &str =
     "the systemd unit is not installed (use \"mmg service install\")";
 
 pub const SERVICE_NO_DESKTOP: &str = "the systemd user session has no XDG_CURRENT_DESKTOP, so the unit only sees mimeapps.list; run \"dbus-update-activation-environment --systemd XDG_CURRENT_DESKTOP\" at login, or set guard.desktops in the configuration";
+
+pub const ADOPT_COMMAND: &str = "adopt";
+
+pub const ADOPT_KEPT: &str = "Defaults kept in";
+
+pub const ADOPT_KEPT_HINT: &str = "(mmg now protects these defaults)";
+
+pub const ADOPT_REFUSED: &str = "Changes mmg cannot protect:";
+
+pub const ADOPT_NO_CONFIG: &str =
+    "(no mmg configuration yet, so nothing was kept; use \"mmg init\" to create one)";

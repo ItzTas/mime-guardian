@@ -1,8 +1,8 @@
 use clap::{ArgAction, Parser, Subcommand};
 
 use super::commands::{
-    ApplyArgs, CompletionsArgs, InitArgs, LogArgs, RestoreArgs, ServiceArgs, SetArgs, StatusArgs,
-    UnsetArgs, WatchArgs,
+    AdoptArgs, ApplyArgs, CompletionsArgs, InitArgs, LogArgs, RestoreArgs, ServiceArgs, SetArgs,
+    StatusArgs, UnsetArgs, WatchArgs,
 };
 
 #[derive(Debug, Parser)]
@@ -51,6 +51,14 @@ pub enum Cmd {
     Unset(UnsetArgs),
     #[command(about = "Run mmg watch as a systemd user service")]
     Service(ServiceArgs),
+    #[command(
+        about = "Run a program and keep the defaults it changes",
+        long_about = "Run a program that sets default applications, such as handlr or xdg-mime. \
+Once it exits, every type whose default it changed in your mimeapps.list files is copied into \
+the configuration, so mmg keeps your choice instead of putting the old one back. The watcher \
+waits while the program runs."
+    )]
+    Adopt(AdoptArgs),
     #[command(about = "Print a completion script for a shell")]
     Completions(CompletionsArgs),
     #[command(about = "Print the manual page")]

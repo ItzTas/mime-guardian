@@ -1,3 +1,4 @@
+mod adopt_cmd;
 mod apply_cmd;
 mod completions_cmd;
 mod init_cmd;
@@ -9,6 +10,7 @@ mod set_cmd;
 mod status_cmd;
 mod watch_cmd;
 
+pub use adopt_cmd::{AdoptArgs, adopt_cmd};
 pub use apply_cmd::{ApplyArgs, apply_cmd};
 pub use completions_cmd::{CompletionsArgs, completions_cmd};
 pub use init_cmd::{InitArgs, init_cmd};
