@@ -85,6 +85,7 @@ keep its comments.
 | `mmg set <mime> <app>`, `mmg unset <mime>` | Start or stop protecting a type. |
 | `mmg log [-a]` | List the times an application took a type and mmg put it back. |
 | `mmg restore [ID] [-l]` | Put back the files an earlier write replaced. |
+| `mmg adopt <command> [args]` | Run a tool such as handlr or `xdg-mime` and keep the defaults it changes. See [Changing defaults with other tools](#changing-defaults-with-other-tools). |
 | `mmg service install\|uninstall\|status` | Run the watcher as a systemd user service. |
 | `mmg completions <shell>`, `mmg man` | Print a completion script or the manual page. |
 
@@ -133,6 +134,34 @@ dbus-update-activation-environment --systemd XDG_CURRENT_DESKTOP
 ```
 
 Or set `desktops = ["kde"]` under `[guard]`.
+
+## Changing defaults with other tools
+
+Tools like [handlr-regex](https://github.com/Anomalocaridid/handlr-regex) or
+`xdg-mime` write your choices to the same `mimeapps.list` files. mmg can't
+tell that apart from a program taking over a type, so it would put the old
+default back. Run the tool through `mmg adopt` instead:
+
+```
+mmg adopt handlr set text/html firefox.desktop
+mmg adopt xdg-mime default org.gnome.Loupe.desktop image/png
+```
+
+mmg runs the command as given, and the watcher waits while it runs. When the
+command exits, mmg compares the default of each type across your
+`mimeapps.list` files with what it was before, and copies every type that
+changed into `config.toml`. If the tool unsets a type you protect, mmg drops it
+from the configuration. A wildcard key the tool writes as is, such as
+`image/*`, stays a wildcard in the configuration. If the command fails, mmg
+keeps nothing.
+
+To keep typing the tool's own name, wrap it in your shell:
+
+```sh
+handlr() { mmg adopt handlr "$@"; }
+```
+
+In fish: `function handlr; mmg adopt handlr $argv; end`.
 
 ## Building
 
