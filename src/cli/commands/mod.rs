@@ -4,6 +4,8 @@ mod init_cmd;
 mod log_cmd;
 mod man_cmd;
 mod restore_cmd;
+mod service_cmd;
+mod set_cmd;
 mod status_cmd;
 mod watch_cmd;
 
@@ -13,5 +15,7 @@ pub use init_cmd::{InitArgs, init_cmd};
 pub use log_cmd::{LogArgs, log_cmd};
 pub use man_cmd::man_cmd;
 pub use restore_cmd::{RestoreArgs, restore_cmd};
+pub use service_cmd::{ServiceArgs, service_cmd};
+pub use set_cmd::{SetArgs, UnsetArgs, set_cmd, unset_cmd};
 pub use status_cmd::{StatusArgs, status_cmd};
 pub use watch_cmd::{WatchArgs, watch_cmd};

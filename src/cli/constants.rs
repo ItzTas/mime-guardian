@@ -76,3 +76,16 @@ pub const RESTORE_COMMAND: &str = "restore";
 pub const RESTORE_EMPTY: &str = "no backups yet; mmg makes one every time it writes";
 
 pub const RESTORE_WATCH_HINT: &str = "(a running mmg watch pins the configured defaults again; change the configuration to keep these)";
+
+pub const DESKTOP_SUFFIX: &str = ".desktop";
+
+pub const SET_COMMAND: &str = "set";
+
+pub const UNSET_COMMAND: &str = "unset";
+
+pub const SERVICE_COMMAND: &str = "service";
+
+pub const SERVICE_NOT_INSTALLED: &str =
+    "the systemd unit is not installed (use \"mmg service install\")";
+
+pub const SERVICE_NO_DESKTOP: &str = "the systemd user session has no XDG_CURRENT_DESKTOP, so the unit only sees mimeapps.list; run \"dbus-update-activation-environment --systemd XDG_CURRENT_DESKTOP\" at login, or set guard.desktops in the configuration";

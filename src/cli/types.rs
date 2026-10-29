@@ -1,7 +1,8 @@
 use clap::{ArgAction, Parser, Subcommand};
 
 use super::commands::{
-    ApplyArgs, CompletionsArgs, InitArgs, LogArgs, RestoreArgs, StatusArgs, WatchArgs,
+    ApplyArgs, CompletionsArgs, InitArgs, LogArgs, RestoreArgs, ServiceArgs, SetArgs, StatusArgs,
+    UnsetArgs, WatchArgs,
 };
 
 #[derive(Debug, Parser)]
@@ -44,6 +45,12 @@ pub enum Cmd {
     Log(LogArgs),
     #[command(about = "Put back the mimeapps.list files an earlier write replaced")]
     Restore(RestoreArgs),
+    #[command(about = "Protect a type with an application, then pin it")]
+    Set(SetArgs),
+    #[command(about = "Stop protecting a type")]
+    Unset(UnsetArgs),
+    #[command(about = "Run mmg watch as a systemd user service")]
+    Service(ServiceArgs),
     #[command(about = "Print a completion script for a shell")]
     Completions(CompletionsArgs),
     #[command(about = "Print the manual page")]

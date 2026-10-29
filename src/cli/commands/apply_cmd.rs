@@ -5,7 +5,7 @@ use super::super::constants::{APPLY_CONFLICTS, APPLY_DRY_RUN, APPLY_PINNED};
 use super::status_cmd::{describe_event, report};
 use crate::history::Trigger;
 use crate::output::{self, Tone};
-use crate::reconcile;
+use crate::reconcile::{self, Plan};
 use crate::system::Context;
 
 #[derive(Debug, Args)]
@@ -33,7 +33,11 @@ pub fn apply_cmd(args: ApplyArgs) -> Result<()> {
         return Ok(());
     }
 
-    let outcome = reconcile::apply(&context.system.xdg, &plan, Trigger::Apply)?;
+    pin(&context, &plan)
+}
+
+pub fn pin(context: &Context, plan: &Plan) -> Result<()> {
+    let outcome = reconcile::apply(&context.system.xdg, plan, Trigger::Apply)?;
 
     if !outcome.events.is_empty() {
         output::section(APPLY_PINNED);
