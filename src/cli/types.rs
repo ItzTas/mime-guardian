@@ -1,6 +1,8 @@
 use clap::{ArgAction, Parser, Subcommand};
 
-use super::commands::{ApplyArgs, CompletionsArgs, InitArgs, LogArgs, RestoreArgs, StatusArgs};
+use super::commands::{
+    ApplyArgs, CompletionsArgs, InitArgs, LogArgs, RestoreArgs, StatusArgs, WatchArgs,
+};
 
 #[derive(Debug, Parser)]
 #[command(
@@ -36,6 +38,8 @@ pub enum Cmd {
     Status(StatusArgs),
     #[command(about = "Pin every protected type to the application you set, once")]
     Apply(ApplyArgs),
+    #[command(about = "Keep running and put every protected type back as soon as it changes")]
+    Watch(WatchArgs),
     #[command(about = "List the times an application took a protected type and mmg put it back")]
     Log(LogArgs),
     #[command(about = "Put back the mimeapps.list files an earlier write replaced")]

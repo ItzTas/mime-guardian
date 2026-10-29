@@ -1,3 +1,4 @@
+pub mod alert;
 pub mod backup;
 pub mod cli;
 pub mod config;
@@ -10,3 +11,4 @@ pub mod output;
 pub mod reconcile;
 pub mod system;
 pub mod utils;
+pub mod watch;
