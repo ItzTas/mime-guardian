@@ -5,6 +5,7 @@ use super::super::constants::{INIT_COMMAND, INIT_NEXT};
 use crate::config;
 use crate::files::replace_contents;
 use crate::output;
+use crate::reconcile::target;
 use crate::system::System;
 use crate::utils::Xdg;
 
@@ -25,7 +26,11 @@ pub fn init_cmd(args: InitArgs) -> Result<()> {
     }
 
     let defaults = System::load(xdg)?.current_defaults();
-    replace_contents(INIT_COMMAND, &path, config::initial(&defaults).as_bytes())?;
+    replace_contents(
+        INIT_COMMAND,
+        &target(&path),
+        config::initial(&defaults).as_bytes(),
+    )?;
 
     output::note(format!(
         "created {} with {} defaults this session already uses",
