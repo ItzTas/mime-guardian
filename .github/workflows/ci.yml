@@ -35,6 +35,16 @@ jobs:
       - name: Test
         run: cargo test --locked --verbose
 
+  scripts:
+    name: Shell scripts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check
+        run: shellcheck .githooks/* packaging/release/*.sh packaging/aur/publish.sh
+
   deny:
     name: Dependencies
     runs-on: ubuntu-latest
