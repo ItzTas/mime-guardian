@@ -1,7 +1,9 @@
+pub mod backup;
 pub mod cli;
 pub mod config;
 pub mod desktop;
 pub mod files;
+pub mod history;
 pub mod mimeapps;
 pub mod mimedb;
 pub mod output;
