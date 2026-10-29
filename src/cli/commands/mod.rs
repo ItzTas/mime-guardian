@@ -1,6 +1,5 @@
 mod apply_cmd;
 mod completions_cmd;
-mod context;
 mod init_cmd;
 mod log_cmd;
 mod man_cmd;

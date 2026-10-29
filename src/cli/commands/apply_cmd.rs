@@ -2,11 +2,11 @@ use anyhow::Result;
 use clap::Args;
 
 use super::super::constants::{APPLY_CONFLICTS, APPLY_DRY_RUN, APPLY_PINNED};
-use super::context::Context;
 use super::status_cmd::{describe_event, report};
 use crate::history::Trigger;
 use crate::output::{self, Tone};
 use crate::reconcile;
+use crate::system::Context;
 
 #[derive(Debug, Args)]
 pub struct ApplyArgs {

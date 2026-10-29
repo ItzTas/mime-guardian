@@ -5,10 +5,10 @@ use super::super::constants::{
     STATUS_CLEAN, STATUS_OVERRIDDEN, STATUS_OVERRIDDEN_HINT, STATUS_SKIPPED, STATUS_SKIPPED_HINT,
     STATUS_UNPINNED, STATUS_UNPINNED_HINT, UNSET,
 };
-use super::context::Context;
 use crate::history::Event;
 use crate::output::{self, Tone};
 use crate::reconcile::{Drift, Plan};
+use crate::system::Context;
 
 #[derive(Debug, Args)]
 pub struct StatusArgs {}
