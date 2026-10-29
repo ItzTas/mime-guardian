@@ -1,0 +1,47 @@
+[package]
+name = "mime-guardian"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.87"
+description = "Keeps your default applications the way you set them"
+build = "build/main.rs"
+repository = "https://github.com/ItzTas/mime-guardian"
+readme = "README.md"
+license = "MIT"
+keywords = ["mime", "xdg", "mimeapps", "default-applications", "cli"]
+categories = ["command-line-utilities", "config"]
+exclude = [
+  "/.claude",
+  "/.githooks",
+  "/.github",
+  "/CLAUDE.md",
+  "/cog.toml",
+  "/deny.toml",
+]
+
+[[bin]]
+name = "mmg"
+path = "src/main.rs"
+
+[dependencies]
+anstream = "1.0.0"
+anstyle = "1.0.14"
+anyhow = "1.0.104"
+clap = { version = "4.6.6", features = ["derive", "string"] }
+clap_complete = "4.6.9"
+clap_mangen = "0.3.3"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[dev-dependencies]
+assert_cmd = "2.2.2"
+predicates = "3.1.4"
+tempfile = "3.27.0"
+
+[lints.clippy]
+needless_return = "allow"

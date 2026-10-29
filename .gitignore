@@ -1,0 +1,12 @@
+/target
+**/*.rs.bk
+**/mutants.out*/
+
+/.gitignored/
+
+/dist/
+
+/result
+/result-*
+
+/.cargo/
