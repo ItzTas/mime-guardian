@@ -9,6 +9,7 @@ pub mod mimeapps;
 pub mod mimedb;
 pub mod output;
 pub mod reconcile;
+pub mod service;
 pub mod system;
 pub mod utils;
 pub mod watch;

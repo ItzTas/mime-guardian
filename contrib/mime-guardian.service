@@ -1,0 +1,13 @@
+[Unit]
+Description=Keep default applications the way you set them
+Documentation=https://github.com/ItzTas/mime-guardian
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/mmg watch
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target
