@@ -24,8 +24,13 @@ pub const MAN_ENVIRONMENT_SECTION: &str = "ENVIRONMENT";
 
 pub const MAN_SEE_ALSO_SECTION: &str = "SEE ALSO";
 
-pub const MAN_ENVIRONMENT: [(&str, &str); 1] =
-    [("RUST_LOG", "The log filter mmg reads when -v is not given.")];
+pub const MAN_ENVIRONMENT: [(&str, &str); 2] = [
+    (
+        "MMG_NOTIFY",
+        "Turns the notifications of mmg watch on or off over guard.notify: on, off, true, false, 1, 0, yes or no.",
+    ),
+    ("RUST_LOG", "The log filter mmg reads when -v is not given."),
+];
 
 pub const MAN_SEE_ALSO: &str = "xdg-mime(1), update-mime-database(1)";
 
@@ -100,3 +105,9 @@ pub const ADOPT_REFUSED: &str = "Changes mmg cannot protect:";
 
 pub const ADOPT_NO_CONFIG: &str =
     "(no mmg configuration yet, so nothing was kept; use \"mmg init\" to create one)";
+
+pub const CONFIG_COMMAND: &str = "config";
+
+pub const SWITCH_ON: &str = "on";
+
+pub const SWITCH_OFF: &str = "off";

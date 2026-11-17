@@ -10,6 +10,7 @@ use super::super::constants::{
 };
 use crate::adopt::{self, Adoption, Change};
 use crate::config;
+use crate::desktop::{Installed, app_dirs};
 use crate::files::replace_contents;
 use crate::mimeapps::{self, MimeApps};
 use crate::output::{self, Tone};
@@ -57,12 +58,23 @@ pub fn adopt_cmd(args: AdoptArgs) -> Result<()> {
         return Ok(());
     };
 
-    let adoption = adopt::adopt(&text, changes)?;
+    let adoption = adopt::adopt(&text, packaged(changes, &xdg))?;
     if adoption.text != text {
         replace_contents(ADOPT_COMMAND, &config_path, adoption.text.as_bytes())?;
     }
     report(&adoption, &config_path);
     Ok(())
+}
+
+fn packaged(changes: Vec<Change>, xdg: &Xdg) -> Vec<Change> {
+    let installed = Installed::scan(&app_dirs(xdg));
+    changes
+        .into_iter()
+        .map(|change| Change {
+            after: change.after.map(|app| installed.canonical(&app)),
+            ..change
+        })
+        .collect()
 }
 
 fn snapshot(paths: &[PathBuf]) -> Result<Vec<MimeApps>> {

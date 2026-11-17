@@ -21,10 +21,10 @@ struct Watched {
     xdg: Xdg,
     config: PathBuf,
     pauses: PathBuf,
-    notify: bool,
+    notify: Option<bool>,
 }
 
-pub fn run(xdg: Xdg, notify: bool) -> Result<()> {
+pub fn run(xdg: Xdg, notify: Option<bool>) -> Result<()> {
     let watched = Watched {
         config: config::path(&xdg),
         pauses: pauses_dir(&xdg),
@@ -116,8 +116,8 @@ impl Watched {
             .into_iter()
             .filter(|event| event.overridden)
             .collect();
-        if self.notify && context.config.guard.notify {
-            alert::send(&overridden);
+        if self.notify.unwrap_or(context.config.guard.notify) {
+            alert::send(&overridden, &context.config.notification);
         }
         Ok(())
     }

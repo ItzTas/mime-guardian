@@ -90,7 +90,7 @@ fn desktop_id(app: &str) -> String {
     format!("{app}{DESKTOP_SUFFIX}")
 }
 
-fn existing(command: &str, path: &std::path::Path) -> Result<String> {
+pub fn existing(command: &str, path: &std::path::Path) -> Result<String> {
     let Some(text) = config::read(path)? else {
         bail!(
             "{command}: {} does not exist (use \"mmg init\" to create it)",

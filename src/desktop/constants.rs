@@ -15,3 +15,7 @@ pub const TRUE: &str = "true";
 pub const FLATPAK_USER_EXPORTS: &str = "flatpak/exports/share";
 
 pub const FLATPAK_SYSTEM_EXPORTS: &str = "/var/lib/flatpak/exports/share";
+
+pub const EXEC_KEY: &str = "Exec";
+
+pub const USERAPP_PREFIX: &str = "userapp-";

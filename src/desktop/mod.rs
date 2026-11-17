@@ -1,3 +1,4 @@
+mod canonical;
 mod constants;
 mod scan;
 mod types;

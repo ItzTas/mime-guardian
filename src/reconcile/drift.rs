@@ -121,6 +121,7 @@ mod tests {
                         path: Path::new("/apps").join(id),
                         hidden: false,
                         mime_types: vec![],
+                        program: None,
                     };
                     (id.to_string(), app)
                 })

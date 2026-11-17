@@ -40,9 +40,14 @@ impl Session {
     }
 
     fn watch(&self) -> Running {
+        self.watch_with(&[])
+    }
+
+    fn watch_with(&self, vars: &[(&str, &str)]) -> Running {
         let child = Command::new(assert_cmd::cargo::cargo_bin("mmg"))
             .arg("watch")
             .env_clear()
+            .envs(vars.iter().copied())
             .env("HOME", self.root.path())
             .env("XDG_CONFIG_HOME", self.path("config"))
             .env("XDG_CONFIG_DIRS", self.path("etc"))
@@ -119,4 +124,30 @@ fn a_pause_holds_the_watch_until_it_is_lifted() {
 
     std::fs::remove_file(&pause).unwrap();
     wait_until(&generic, "text/html=firefox.desktop;");
+}
+
+#[test]
+fn the_variable_turns_on_a_custom_notification_command() {
+    let session = Session::new();
+    let sent = session.path("sent");
+    write(
+        &session.path("config/mime-guardian/config.toml"),
+        &format!(
+            "[defaults]\n\"text/html\" = \"firefox.desktop\"\n\n[guard]\nnotify = false\n\n\
+[notification]\nsummary = \"{{count}} put back\"\n\
+command = 'printf \"%s|%s|%s\" \"$MMG_SUMMARY\" \"$MMG_BODY\" \"$MMG_TRANSIENT\" > \"{}\"'\n",
+            sent.display()
+        ),
+    );
+    let _watch = session.watch_with(&[("MMG_NOTIFY", "yes")]);
+    let generic = session.path("config/mimeapps.list");
+    let desktop = session.path("config/kde-mimeapps.list");
+    wait_until(&generic, "text/html=firefox.desktop;");
+
+    write(&desktop, INTRUDER);
+
+    wait_until(
+        &sent,
+        "1 put back|text/html: chrome.desktop → firefox.desktop|false",
+    );
 }

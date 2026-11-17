@@ -31,6 +31,16 @@ pub fn set_default(text: &str, mime: &str, app: &str) -> Result<String> {
     Ok(document.to_string())
 }
 
+pub fn set_notify(text: &str, on: bool) -> Result<String> {
+    let mut document = document(text)?;
+    let guard = document[GUARD_TABLE].or_insert(Item::Table(Table::new()));
+    let Some(table) = guard.as_table_mut() else {
+        anyhow::bail!("{COMMAND}: [{GUARD_TABLE}] is not a table");
+    };
+    table[NOTIFY_KEY] = value(on);
+    Ok(document.to_string())
+}
+
 pub fn unset_default(text: &str, mime: &str) -> Result<Option<String>> {
     let mut document = document(text)?;
     let removed = document
@@ -84,6 +94,25 @@ mod tests {
             parse(&out).unwrap().defaults["text/html"],
             "firefox.desktop"
         );
+    }
+
+    #[test]
+    fn notify_is_switched_keeping_the_comments() {
+        let text = "# mine\n[guard]\nnotify = true # keep\ndesktops = [\"kde\"]\n";
+
+        let off = set_notify(text, false).unwrap();
+
+        assert!(off.starts_with("# mine\n"));
+        let config = parse(&off).unwrap();
+        assert!(!config.guard.notify);
+        assert_eq!(config.guard.desktops, ["kde"]);
+        assert!(
+            parse(&set_notify(&off, true).unwrap())
+                .unwrap()
+                .guard
+                .notify
+        );
+        assert!(!parse(&set_notify("", false).unwrap()).unwrap().guard.notify);
     }
 
     #[test]
