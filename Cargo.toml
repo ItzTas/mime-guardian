@@ -1,6 +1,6 @@
 [package]
 name = "mime-guardian"
-version = "0.2.0-nightly.1"
+version = "0.2.0-nightly.2"
 edition = "2024"
 rust-version = "1.87"
 description = "Keeps your default applications the way you set them"
