@@ -61,6 +61,8 @@ for arch in "${!rust_targets[@]}"; do
 	install -Dm0755 "target/${rust_targets[$arch]}/release/$bin" "$stage/$bin"
 	install -Dm0644 LICENSE "$stage/LICENSE"
 	install -Dm0644 "contrib/$name.service" "$stage/$name.service"
+	install -Dm0644 "contrib/$name.desktop" "$stage/$name.desktop"
+	install -Dm0644 "contrib/$name.svg" "$stage/$name.svg"
 	install -Dm0644 "$manual" "$stage/$bin.1"
 	install -d "$stage/completions"
 	install -m0644 "$completions"/* "$stage/completions/"
