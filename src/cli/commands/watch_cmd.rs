@@ -1,6 +1,7 @@
 use anyhow::Result;
 use clap::Args;
 
+use crate::config;
 use crate::utils::Xdg;
 use crate::watch;
 
@@ -14,5 +15,10 @@ pub struct WatchArgs {
 }
 
 pub fn watch_cmd(args: WatchArgs) -> Result<()> {
-    watch::run(Xdg::from_env()?, !args.no_notify)
+    let notify = if args.no_notify {
+        Some(false)
+    } else {
+        config::notify_override()?
+    };
+    watch::run(Xdg::from_env()?, notify)
 }
