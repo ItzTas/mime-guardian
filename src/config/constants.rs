@@ -35,4 +35,4 @@ pub const DEFAULT_SUMMARY: &str = "Default applications put back";
 
 pub const DEFAULT_LINE: &str = "{mime}: {from} → {to}";
 
-pub const DEFAULT_ICON: &str = "preferences-desktop-default-applications";
+pub const DEFAULT_ICON: &str = "mime-guardian";

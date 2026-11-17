@@ -1,6 +1,8 @@
 pub const PROGRAM: &str = "notify-send";
 
-pub const APP_NAME: &str = "--app-name=mmg";
+pub const APP_NAME: &str = "--app-name=mime-guardian";
+
+pub const DESKTOP_ENTRY_HINT: &str = "--hint=string:desktop-entry:mime-guardian";
 
 pub const ICON_FLAG: &str = "--icon";
 
