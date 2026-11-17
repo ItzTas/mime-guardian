@@ -103,7 +103,7 @@ command = 'notify-send -u low "$MMG_SUMMARY" "$MMG_BODY"'
 | --- | --- | --- |
 | `summary` | `Default applications put back` | The title. `{count}` becomes the number of types put back. |
 | `line` | `{mime}: {from} → {to}` | One body line per type. The body lists five types and counts the rest. |
-| `icon` | `preferences-desktop-default-applications` | The icon name. Leave it empty for no icon. |
+| `icon` | `mime-guardian` | The icon name. The packages install the `mime-guardian` icon, but `cargo install` doesn't, so pick one from your icon theme there, such as `preferences-desktop-default-applications`. Leave it empty for no icon. |
 | `transient` | `false` | Ask the notification server not to keep the notification in its history. |
 | `command` | none | A shell command to run instead of `notify-send`. |
 

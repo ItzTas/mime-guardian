@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=mime-guardian
+Comment=Keeps your default applications the way you set them
+Exec=mmg
+Icon=mime-guardian
+Terminal=true
+NoDisplay=true

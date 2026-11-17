@@ -1,9 +1,9 @@
 use std::process::{Command, Stdio};
 
 use super::constants::{
-    APP_NAME, BODY_ENV, COUNT_ENV, COUNT_FIELD, FROM_FIELD, ICON_ENV, ICON_FLAG, MIME_FIELD,
-    NO_APPLICATION, PROGRAM, SHELL, SHELL_SCRIPT_FLAG, SHOWN, SUMMARY_ENV, TO_FIELD, TRANSIENT_ENV,
-    TRANSIENT_FLAG,
+    APP_NAME, BODY_ENV, COUNT_ENV, COUNT_FIELD, DESKTOP_ENTRY_HINT, FROM_FIELD, ICON_ENV,
+    ICON_FLAG, MIME_FIELD, NO_APPLICATION, PROGRAM, SHELL, SHELL_SCRIPT_FLAG, SHOWN, SUMMARY_ENV,
+    TO_FIELD, TRANSIENT_ENV, TRANSIENT_FLAG,
 };
 use super::types::Alert;
 use crate::config::Notification;
@@ -54,7 +54,7 @@ fn line(template: &str, event: &Event) -> String {
 
 fn notify_send(alert: &Alert, settings: &Notification) -> Command {
     let mut command = Command::new(PROGRAM);
-    command.arg(APP_NAME);
+    command.args([APP_NAME, DESKTOP_ENTRY_HINT]);
     if !settings.icon.is_empty() {
         command.arg(format!("{ICON_FLAG}={}", settings.icon));
     }
@@ -182,8 +182,9 @@ mod tests {
         assert_eq!(
             args(&command),
             [
-                "--app-name=mmg",
-                "--icon=preferences-desktop-default-applications",
+                "--app-name=mime-guardian",
+                "--hint=string:desktop-entry:mime-guardian",
+                "--icon=mime-guardian",
                 "--transient",
                 "--",
                 "Default applications put back",
@@ -194,7 +195,7 @@ mod tests {
             icon: String::new(),
             ..Notification::default()
         };
-        assert_eq!(args(&notify_send(&alert, &plain))[1], "--");
+        assert_eq!(args(&notify_send(&alert, &plain))[2], "--");
     }
 
     #[test]
@@ -211,7 +212,7 @@ mod tests {
             ("MMG_SUMMARY", "Default applications put back"),
             ("MMG_BODY", "text/html: chrome.desktop → firefox.desktop"),
             ("MMG_COUNT", "1"),
-            ("MMG_ICON", "preferences-desktop-default-applications"),
+            ("MMG_ICON", "mime-guardian"),
             ("MMG_TRANSIENT", "false"),
         ] {
             assert!(
