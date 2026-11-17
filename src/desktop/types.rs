@@ -6,6 +6,7 @@ pub struct App {
     pub path: PathBuf,
     pub hidden: bool,
     pub mime_types: Vec<String>,
+    pub program: Option<String>,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
