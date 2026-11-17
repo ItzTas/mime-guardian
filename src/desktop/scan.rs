@@ -1,8 +1,8 @@
 use std::path::{Path, PathBuf};
 
 use super::constants::{
-    APPLICATIONS_DIR, ENTRY_GROUP, EXTENSION, FLATPAK_SYSTEM_EXPORTS, FLATPAK_USER_EXPORTS,
-    HIDDEN_KEY, ID_SEPARATOR, MIME_TYPE_KEY, TRUE,
+    APPLICATIONS_DIR, ENTRY_GROUP, EXEC_KEY, EXTENSION, FLATPAK_SYSTEM_EXPORTS,
+    FLATPAK_USER_EXPORTS, HIDDEN_KEY, ID_SEPARATOR, MIME_TYPE_KEY, TRUE,
 };
 use super::types::{App, Installed};
 use crate::utils::Xdg;
@@ -79,6 +79,7 @@ fn parse(path: &Path, text: &str) -> App {
         path: path.to_path_buf(),
         hidden: false,
         mime_types: Vec::new(),
+        program: None,
     };
     let mut in_entry = false;
 
@@ -99,11 +100,22 @@ fn parse(path: &Path, text: &str) -> App {
         match key.trim() {
             HIDDEN_KEY => app.hidden = value.trim() == TRUE,
             MIME_TYPE_KEY => app.mime_types = split(value),
+            EXEC_KEY => app.program = program(value),
             _ => {}
         }
     }
 
     app
+}
+
+fn program(exec: &str) -> Option<String> {
+    let exec = exec.trim();
+    let command = match exec.strip_prefix('"') {
+        Some(quoted) => quoted.split('"').next()?,
+        None => exec.split_whitespace().next()?,
+    };
+    let name = Path::new(command).file_name()?.to_str()?;
+    Some(name.to_string())
 }
 
 fn split(value: &str) -> Vec<String> {

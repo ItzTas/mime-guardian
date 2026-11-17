@@ -40,6 +40,8 @@ package() {
 	install -Dm0755 "target/release/$_bin" "$pkgdir/usr/bin/$_bin"
 	install -Dm0644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 	install -Dm0644 "contrib/$_pkgname.service" "$pkgdir/usr/lib/systemd/user/$_pkgname.service"
+	install -Dm0644 "contrib/$_pkgname.desktop" "$pkgdir/usr/share/applications/$_pkgname.desktop"
+	install -Dm0644 "contrib/$_pkgname.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/$_pkgname.svg"
 
 	install -d "$pkgdir/usr/share/bash-completion/completions"
 	install -d "$pkgdir/usr/share/zsh/site-functions"

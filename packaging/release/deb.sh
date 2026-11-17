@@ -52,6 +52,8 @@ for arch in "${!debian_archs[@]}"; do
 	install -Dm0755 "$source/$bin" "$tree/usr/bin/$bin"
 	install -Dm0644 "$source/LICENSE" "$tree/usr/share/doc/$name/copyright"
 	install -Dm0644 "$source/$name.service" "$tree/usr/lib/systemd/user/$name.service"
+	install -Dm0644 "$source/$name.desktop" "$tree/usr/share/applications/$name.desktop"
+	install -Dm0644 "$source/$name.svg" "$tree/usr/share/icons/hicolor/scalable/apps/$name.svg"
 	install -Dm0644 "$source/completions/$bin.bash" \
 		"$tree/usr/share/bash-completion/completions/$bin"
 	install -Dm0644 "$source/completions/_$bin" \

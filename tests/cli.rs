@@ -108,3 +108,55 @@ fn the_manual_page_is_roff() {
         .stdout(predicate::str::starts_with(".ie \\n(.g"))
         .stdout(predicate::str::contains(".TH MMG"));
 }
+
+#[test]
+fn notifications_are_switched_and_overridden_by_the_environment() {
+    let home = tempfile::tempdir().unwrap();
+    let home = home.path();
+    let config = home.join("config/mime-guardian/config.toml");
+
+    session(home)
+        .args(["config", "notify", "off"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("mmg init"));
+
+    session(home).arg("init").assert().success();
+    session(home)
+        .args(["config", "notify"])
+        .assert()
+        .success()
+        .stdout("on\n");
+
+    for (word, state) in [("off", "off"), ("1", "on"), ("no", "off"), ("TRUE", "on")] {
+        session(home)
+            .args(["config", "notify", word])
+            .assert()
+            .success()
+            .stdout(predicate::str::contains(format!(
+                "notifications are {state}"
+            )));
+    }
+    assert!(read(&config).contains("notify = true"));
+
+    session(home)
+        .args(["config", "notify", "maybe"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("expected on, off"));
+
+    session(home)
+        .env("MMG_NOTIFY", "0")
+        .args(["config", "notify"])
+        .assert()
+        .success()
+        .stdout(predicate::str::starts_with("off\n"))
+        .stdout(predicate::str::contains("MMG_NOTIFY overrides"));
+
+    session(home)
+        .env("MMG_NOTIFY", "maybe")
+        .args(["config", "notify"])
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("MMG_NOTIFY=maybe"));
+}

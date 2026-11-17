@@ -1,0 +1,70 @@
+name: Nightly
+
+on:
+  push:
+    branches:
+      - nightly
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    name: CI
+    uses: ./.github/workflows/ci.yml
+
+  bump:
+    name: Bump the nightly version
+    needs: ci
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      tag: ${{ steps.bump.outputs.tag }}
+    env:
+      COG_VERSION: 7.0.0
+      COG_TARGET: x86_64-unknown-linux-musl
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cocogitto
+        run: |
+          curl -sSfL "https://github.com/cocogitto/cocogitto/releases/download/${COG_VERSION}/cocogitto-${COG_VERSION}-${COG_TARGET}.tar.gz" |
+            sudo tar -xz -C /usr/local/bin --strip-components=1 "${COG_TARGET}/cog"
+
+      - name: Bump
+        id: bump
+        env:
+          ACTOR: ${{ github.actor }}
+          ACTOR_ID: ${{ github.actor_id }}
+        run: |
+          git checkout -B nightly "$GITHUB_SHA"
+          git config user.name "$ACTOR"
+          git config user.email "$ACTOR_ID+$ACTOR@users.noreply.github.com"
+          cog bump --auto --pre --skip-ci
+          ./packaging/release/changelog.sh --amend
+          tag=$(git describe --tags --exact-match HEAD)
+          git push origin nightly
+          git push origin "$tag"
+          echo "tag=$tag" >>"$GITHUB_OUTPUT"
+
+  release:
+    name: Release
+    needs: bump
+    permissions:
+      contents: write
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.bump.outputs.tag }}
+    secrets: inherit

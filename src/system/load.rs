@@ -70,7 +70,7 @@ impl System {
             .into_iter()
             .filter_map(|mime| {
                 let found = self.effective(&mime)?;
-                Some((mime, found.app))
+                Some((mime, self.installed.canonical(&found.app)))
             })
             .collect()
     }

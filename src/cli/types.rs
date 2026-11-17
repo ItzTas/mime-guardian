@@ -1,8 +1,8 @@
 use clap::{ArgAction, Parser, Subcommand};
 
 use super::commands::{
-    AdoptArgs, ApplyArgs, CompletionsArgs, InitArgs, LogArgs, RestoreArgs, ServiceArgs, SetArgs,
-    StatusArgs, UnsetArgs, WatchArgs,
+    AdoptArgs, ApplyArgs, CompletionsArgs, ConfigArgs, InitArgs, LogArgs, RestoreArgs, ServiceArgs,
+    SetArgs, StatusArgs, UnsetArgs, WatchArgs,
 };
 
 #[derive(Debug, Parser)]
@@ -49,6 +49,8 @@ pub enum Cmd {
     Set(SetArgs),
     #[command(about = "Stop protecting a type")]
     Unset(UnsetArgs),
+    #[command(about = "Show or change a setting in the configuration")]
+    Config(ConfigArgs),
     #[command(about = "Run mmg watch as a systemd user service")]
     Service(ServiceArgs),
     #[command(

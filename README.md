@@ -67,12 +67,51 @@ The `[guard]` table is optional:
 
 | Key | Default | What it does |
 | --- | --- | --- |
-| `notify` | `true` | Show a desktop notification when the watcher puts a default back. |
+| `notify` | `true` | Show a desktop notification when the watcher puts a default back. See [Notifications](#notifications). |
 | `added_associations` | `true` | Also move your application to the front of `[Added Associations]` wherever the type already has an entry there. |
 | `desktops` | `[]` | Desktop names to use when `XDG_CURRENT_DESKTOP` is empty, which can happen in a systemd user service. |
 
 `mmg set text/html firefox` and `mmg unset text/html` edit the file for you and
 keep its comments.
+
+### Notifications
+
+`mmg config notify off` turns the notification off and `mmg config notify on`
+turns it back on. It also accepts `true`/`false`, `1`/`0` and `yes`/`no`, and
+prints the current state when you leave the value out. A running watcher reads
+the change on its next pass, so you don't have to restart it.
+
+The `MMG_NOTIFY` environment variable takes the same words and wins over the
+configuration for an `mmg watch` started with it. `--no-notify` wins over both.
+The systemd unit doesn't see what you export in your shell, so for the service
+use `mmg config notify`, or run
+`systemctl --user set-environment MMG_NOTIFY=0` and restart the unit.
+
+The optional `[notification]` table changes what the notification says and how
+it is sent:
+
+```toml
+[notification]
+summary = "{count} defaults put back"
+line = "{mime}: {from} → {to}"
+icon = "preferences-desktop-default-applications"
+transient = true
+command = 'notify-send -u low "$MMG_SUMMARY" "$MMG_BODY"'
+```
+
+| Key | Default | What it does |
+| --- | --- | --- |
+| `summary` | `Default applications put back` | The title. `{count}` becomes the number of types put back. |
+| `line` | `{mime}: {from} → {to}` | One body line per type. The body lists five types and counts the rest. |
+| `icon` | `mime-guardian` | The icon name. The packages install the `mime-guardian` icon, but `cargo install` doesn't, so pick one from your icon theme there, such as `preferences-desktop-default-applications`. Leave it empty for no icon. |
+| `transient` | `false` | Ask the notification server not to keep the notification in its history. |
+| `command` | none | A shell command to run instead of `notify-send`. |
+
+`command` runs through `sh -c` and finds the message in its environment:
+`MMG_SUMMARY`, `MMG_BODY`, `MMG_COUNT`, `MMG_ICON` and `MMG_TRANSIENT` (`true`
+or `false`). mmg never pastes these values into the command text, so quote them
+as you would any shell variable. If the command fails, `mmg watch` prints a
+warning.
 
 ## Commands
 
@@ -83,6 +122,7 @@ keep its comments.
 | `mmg apply [-n]` | Pin every protected type once. `-n` only shows what would change. |
 | `mmg watch` | Keep running and put a type back as soon as something changes it. |
 | `mmg set <mime> <app>`, `mmg unset <mime>` | Start or stop protecting a type. |
+| `mmg config notify [on\|off]` | Show or switch the notification. See [Notifications](#notifications). |
 | `mmg log [-a]` | List the times an application took a type and mmg put it back. |
 | `mmg restore [ID] [-l]` | Put back the files an earlier write replaced. |
 | `mmg adopt <command> [args]` | Run a tool such as handlr or `xdg-mime` and keep the defaults it changes. See [Changing defaults with other tools](#changing-defaults-with-other-tools). |

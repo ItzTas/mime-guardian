@@ -41,6 +41,8 @@ rustPlatform.buildRustPackage {
     install -Dm0644 contrib/${manifest.name}.service $out/lib/systemd/user/${manifest.name}.service
     substituteInPlace $out/lib/systemd/user/${manifest.name}.service \
       --replace-fail /usr/bin/${bin} $out/bin/${bin}
+    install -Dm0644 contrib/${manifest.name}.desktop $out/share/applications/${manifest.name}.desktop
+    install -Dm0644 contrib/${manifest.name}.svg $out/share/icons/hicolor/scalable/apps/${manifest.name}.svg
 
     wrapProgram $out/bin/${bin} --suffix PATH : ${lib.makeBinPath [ libnotify ]}
   ''
